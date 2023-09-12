@@ -1,0 +1,18 @@
+{
+    "boot_pat": {
+        "prefix": "#pat",
+        "body": [
+            "#include<iostream>",
+            "#include<cstdio>",
+            "#include<cmath>",
+            "#include<algorithm>$1",
+            "using namespace std;",
+            "$2",
+            "int main() {",
+            "\t${3:/* code */}",
+            "\treturn 0;",
+            "}"
+        ],
+        "description": "PAT 答题模板"
+    }
+}
