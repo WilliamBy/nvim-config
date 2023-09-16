@@ -1,7 +1,7 @@
 local opt = vim.opt
 Util = {}
 -- 行号
-opt.relativenumber = false
+opt.relativenumber = true
 opt.number = true
 
 -- 缩进
@@ -40,6 +40,13 @@ opt.ignorecase = true
 opt.smartcase = true
 
 -- 外观
-opt.termguicolors = true
 opt.signcolumn = "yes"
-
+vim.api.nvim_exec2(
+[[
+    sign define DiagnosticSignWarn text= texthl=DiagnosticSignWarn linehl= numhl=
+    sign define DiagnosticSignError text= texthl=DiagnosticSignError linehl= numhl=
+    sign define DiagnosticSignInfo text= texthl=DiagnosticSignInfo linehl= numhl=
+    sign define DiagnosticSignHint text= texthl=DiagnosticSignHint linehl= numhl=
+]],
+{ output = false }
+)

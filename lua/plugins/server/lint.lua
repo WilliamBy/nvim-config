@@ -2,7 +2,7 @@
 -- 如果lsp不满足的话可以添加linter
 -- choose linter according to filetype
 require("lint").linters_by_ft = {
-	-- json = { "jsonlint", }
+	json = { "jsonlint" },
 	shell = { "shellcheck" },
 }
 -- autocmd 写入buffer后自动触发lint

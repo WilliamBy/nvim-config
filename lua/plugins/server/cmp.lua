@@ -1,5 +1,7 @@
 -- 自动补全相关（nvim-cmp, luasnip）
-
+local types = require("cmp.types")
+local str = require("cmp.utils.str")
+local neogen = require("neogen")
 -- 1. 补丁：Add additional capabilities supported by nvim-cmp
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
@@ -26,7 +28,10 @@ require("luasnip.loaders.from_vscode").lazy_load()
 -- 加载自定义snippets
 require("luasnip.loaders.from_vscode").lazy_load({ paths = "~/.config/nvim/snippets" })
 
--- 3. setup cmp
+-- 3. setup neogen
+neogen.setup({ snippet_engine = "luasnip" })
+
+-- 4. setup cmp
 local cmp_status_ok, cmp = pcall(require, "cmp")
 if not cmp_status_ok then
 	return
@@ -39,27 +44,51 @@ end
 
 -- 为编辑页面配置自动补全
 cmp.setup({
+	window = {
+		completion = { border = { "/", "-", "\\", "|", "/", "-", "\\", "|" }, scrollbar = false },
+		documentation = {
+			border = { "+", "~", "+", "|", "+", "~", "+", "|" },
+			scrollbar = true,
+			winhighlight = "Normal:Pmenu,FloatBorder:Pmenu,CursorLine:PmenuThumb,Search:IncSearch",
+		},
+	},
 	snippet = {
 		expand = function(args)
 			require("luasnip").lsp_expand(args.body)
 		end,
 	},
 	formatting = {
+		fields = {
+			cmp.ItemField.Kind,
+			cmp.ItemField.Abbr,
+			cmp.ItemField.Menu,
+		},
 		format = require("lspkind").cmp_format({
-			mode = "symbol_text", -- show only symbol annotations
-			maxwidth = 50, -- prevent the popup from showing more than provided characters (e.g 50 will not show more than 50 characters)
-			ellipsis_char = "...", -- when popup menu exceed maxwidth, the truncated part would show ellipsis_char instead (must define maxwidth first)
+			mode = "symbol",
+			cb = function(entry, vim_item)
+				-- Get the full snippet (and only keep first line)
+				local word = entry:get_insert_text()
+				if entry.completion_item.insertTextFormat == types.lsp.InsertTextFormat.Snippet then
+					word = vim.lsp.util.parse_snippet(word)
+				end
+				word = str.oneline(word)
+				if
+					entry.completion_item.insertTextFormat == types.lsp.InsertTextFormat.Snippet
+					and string.sub(vim_item.abbr, -1, -1) == "~"
+				then
+					word = word .. "~"
+				end
+				vim_item.abbr = word
+                -- vim_item.menu =
 
-			-- The function below will be called before any actual modifications from lspkind
-			-- so that you can provide more controls on popup customization. (See [#30](https://github.com/onsails/lspkind-nvim/pull/30))
-			-- before = function(entry, vim_item)
-			-- 	return vim_item
-			-- end,
+				return vim_item
+			end,
 		}),
 	},
 	mapping = cmp.mapping.preset.insert({
 		["<C-b>"] = cmp.mapping.scroll_docs(-4),
 		["<C-f>"] = cmp.mapping.scroll_docs(4),
+        ["<C-c>"] = cmp.mapping.complete({}),
 		["<C-e>"] = cmp.mapping.abort(), -- 取消补全，esc也可以退出
 		["<CR>"] = cmp.mapping.confirm({ select = true }),
 
@@ -70,6 +99,8 @@ cmp.setup({
 				luasnip.expand()
 			elseif luasnip.expand_or_jumpable() then
 				luasnip.expand_or_jump()
+			elseif neogen.jumpable() then
+				neogen.jump_next()
 			elseif check_backspace() then
 				fallback()
 			else
@@ -85,6 +116,8 @@ cmp.setup({
 				cmp.select_prev_item()
 			elseif luasnip.jumpable(-1) then
 				luasnip.jump(-1)
+			elseif neogen.jumpable(true) then
+				neogen.jump_prev()
 			else
 				fallback()
 			end

@@ -1,9 +1,11 @@
-require("core.lazy")
+vim.opt.termguicolors = true
 
 require("core.options")
 require("core.keymaps")
 require("core.utils")
+require("core.lazy")
 require("plugins.server.whichkey")
+
 
 -- 插件
 ---------------
@@ -16,6 +18,7 @@ require("plugins.ui.bufferline")
 require("plugins.ui.gitsigns")
 require("plugins.ui.terminal")
 require("plugins.ui.indent-scope")
+require("plugins.ui.alpha")
 
 -- 编辑功能
 require("plugins.editor.comment")
@@ -31,6 +34,7 @@ require("plugins.server.lint")
 require("plugins.server.neodev")
 require("plugins.server.cmp")
 require("plugins.server.task")
+require("plugins.server.project")
 
 -- 导航
 require("plugins.nav.nvim-tree")

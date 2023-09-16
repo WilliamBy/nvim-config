@@ -114,33 +114,17 @@ local function on_attach(bufnr)
 	vim.keymap.set("n", "K", mark_move_k, opts("Toggle Bookmark Up"))
 	vim.keymap.set("n", "mx", mark_cut, opts("Cut File(s)"))
 	vim.keymap.set("n", "md", mark_trash, opts("Trash File(s)"))
-	vim.keymap.set("n", "my", mark_copy, opts("Copy File(s)"))
+	vim.keymap.set("n", "mc", mark_copy, opts("Copy File(s)"))
 	vim.keymap.set("n", "mv", api.marks.bulk.move, opts("Move Bookmarked"))
 	vim.keymap.set("n", "<C-x>", api.node.navigate.opened.next, opts("Next opened"))
 	vim.keymap.set("n", "<C-z>", api.node.navigate.opened.prev, opts("Prev opened"))
 end
 
 require("nvim-tree").setup({
-	view = {
-		side = "left",
-	},
-	on_attach = on_attach,
-	actions = {
-		open_file = {
-			quit_on_open = true,
-			window_picker = {
-				enable = false,
-			},
-		},
-	},
-	trash = {
-		cmd = "trash",
-	},
-	-- use vim.ui.select api (for dressing.nvim beautifying)
-	select_prompts = true,
-	renderer = {
-		highlight_opened_files = "name",
-		highlight_modified = "icon",
+	modified = {
+		enable = true,
+		show_on_dirs = true,
+		show_on_open_dirs = true,
 	},
 	diagnostics = {
 		enable = true,
@@ -158,7 +142,95 @@ require("nvim-tree").setup({
 			error = "",
 		},
 	},
+	git = {
+		enable = true,
+	},
+	renderer = {
+		indent_markers = {
+			enable = true,
+			inline_arrows = true,
+			icons = {
+				corner = "└",
+				edge = "│",
+				item = "│",
+				bottom = "─",
+				none = " ",
+			},
+		},
+		highlight_git = true,
+		highlight_opened_files = "none",
+		highlight_modified = "icon",
+		icons = {
+			web_devicons = {
+				file = {
+					enable = true,
+					color = true,
+				},
+				folder = {
+					enable = true,
+					color = true,
+				},
+			},
+			git_placement = "after",
+			modified_placement = "before",
+			padding = " ",
+			symlink_arrow = " ➛ ",
+			show = {
+				file = true,
+				folder = true,
+				folder_arrow = true,
+				git = true,
+				modified = true,
+			},
+			glyphs = {
+				default = "",
+				symlink = "",
+				bookmark = "󰆤",
+				modified = "●",
+				folder = {
+					arrow_closed = "",
+					arrow_open = "",
+					default = "",
+					open = "",
+					empty = "",
+					empty_open = "",
+					symlink = "",
+					symlink_open = "",
+				},
+				git = {
+					unstaged = "✗",
+					staged = "✓",
+					unmerged = "",
+					renamed = "󱀸",
+					untracked = "",
+					deleted = "",
+					ignored = "◌",
+				},
+			},
+		},
+	},
+	view = {
+		side = "left",
+		signcolumn = "yes",
+	},
+
+	on_attach = on_attach,
+	actions = {
+		open_file = {
+			quit_on_open = true,
+			window_picker = {
+				enable = false,
+			},
+		},
+	},
+	trash = {
+		cmd = "trash",
+	},
+	-- use vim.ui.select api (for dressing.nvim beautifying)
+	select_prompts = true,
 })
 
+-- highlight group
+vim.api.nvim_set_hl(0, "NvimTreeOpenedFile", { fg = "Gray90" })
 -- nvim-tree
 vim.keymap.set("n", "<leader>m", ":NvimTreeToggle<CR>") -- 开关文件树

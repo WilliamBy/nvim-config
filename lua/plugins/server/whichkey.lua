@@ -112,6 +112,7 @@ wk.register({
 		n = "notifictions",
 		h = "helps",
 		b = "buffers",
+        p = "projects",
 	},
 
 	w = {
@@ -132,6 +133,24 @@ wk.register({
 		w = "write",
 		q = "quit",
 	},
+
+    d = {
+        name = "dap",
+        b = "toggle breakpoint",
+        B = "set breakpoint",
+        r = "open repl",
+        l = "run last",
+        h = "hover",
+        p = "preview",
+        f = "frames",
+        s = "scopes",
+    },
+
+    n = {
+        name = "no",
+        n = "notify",
+        h = "highlight",
+    }
 }, { prefix = "<leader>" })
 
 wk.register({

@@ -46,8 +46,8 @@ require("mason-lspconfig").setup_handlers({
 -- mason-lspconfig 已经接管了lsp配置，无需再用nvim-lspconfig重复配置
 
 -- 4. Lspsaga
-
-require("lspsaga").setup({
+local saga = require("lspsaga")
+saga.setup({
 	ui = {
 		code_action = "󱠂",
 	},
@@ -108,16 +108,16 @@ require("lsp_signature").setup({
 	extra_trigger_chars = {}, -- Array of extra characters that will trigger signature completion, e.g., {"(", ","}
 	zindex = 200, -- by default it will be on top of all floating windows, set to <= 50 send it to bottom
 
-	padding = "", -- character to pad on left and right of signature can be ' ', or '|'  etc
+	padding = " ", -- character to pad on left and right of signature can be ' ', or '|'  etc
 
 	transparency = nil, -- disabled by default, allow floating win transparent value 1~100
 	shadow_blend = 36, -- if you using shadow as border use this set the opacity
 	shadow_guibg = "Black", -- if you using shadow as border use this set the color e.g. 'Green' or '#121315'
 	timer_interval = 200, -- default timer check interval set to lower value if you want to reduce latency
-	toggle_key = nil, -- toggle signature on and off in insert mode,  e.g. toggle_key = '<M-x>'
+	toggle_key = "<C-k>", -- toggle signature on and off in insert mode,  e.g. toggle_key = '<M-x>'
 	toggle_key_flip_floatwin_setting = false, -- true: toggle float setting after toggle key pressed
 
-	select_signature_key = "<C-n>", -- cycle to next signature, e.g. '<M-n>' function overloading
+	select_signature_key = "<S-k>", -- cycle to next signature, e.g. '<M-n>' function overloading
 	move_cursor_key = nil, -- imap, use nvim_set_current_win to move cursor between current win and floating
 })
 
@@ -179,11 +179,28 @@ trouble.setup({
 	use_diagnostic_signs = false, -- enabling this will use the signs defined in your lsp client
 })
 
+-- 6. actions-preview
+require("actions-preview").setup {
+  telescope = {
+    sorting_strategy = "ascending",
+    layout_strategy = "vertical",
+    layout_config = {
+      width = 0.8,
+      height = 0.9,
+      prompt_position = "top",
+      preview_cutoff = 20,
+      preview_height = function(_, _, max_lines)
+        return max_lines - 15
+      end,
+    },
+  },
+}
+
 -- Global mappings.
 -- See `:help vim.diagnostic.*` for documentation on any of the below functions
 vim.keymap.set("n", "<leader>ef", vim.diagnostic.open_float, { desc = { "open float diagnostic" } })
-vim.keymap.set("n", "[d", vim.diagnostic.goto_prev, { desc = "prev diagnostic" })
-vim.keymap.set("n", "]d", vim.diagnostic.goto_next, { desc = "next diagnostic" })
+vim.keymap.set("n", "[d", "<cmd>Lspsaga diagnostic_jump_prev<cr>", { desc = "prev diagnostic" })
+vim.keymap.set("n", "]d", "<cmd>Lspsaga diagnostic_jump_next<cr>", { desc = "next diagnostic" })
 vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "setloclist" })
 
 -- Use LspAttach autocommand to only map the following keys
@@ -200,20 +217,20 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		local opts = { buffer = ev.buf }
 		vim.keymap.set("n", "<leader>wo", "<cmd>Lspsaga outline<CR>")
 		vim.keymap.set("n", "<leader>wr", "<cmd>Lspsaga finder ref+def<CR>")
-		vim.keymap.set("n", "gD", vim.lsp.buf.declaration, opts)
-		vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
+		vim.keymap.set("n", "gD", function()
+			trouble.open("lsp_declarations")
+		end, opts)
+		vim.keymap.set("n", "gd", "<cmd>Lspsaga finder def<CR>", opts)
 		-- vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
 		vim.keymap.set("n", "K", "<cmd>Lspsaga hover_doc<CR>", opts)
-		vim.keymap.set("n", "gi", vim.lsp.buf.implementation, opts)
+		vim.keymap.set("n", "gi", "<cmd>Lspsaga finder imp<CR>", opts)
 		vim.keymap.set({ "n", "i", "v" }, "<C-k>", require("lsp_signature").toggle_float_win, opts)
 		vim.keymap.set("n", "<leader>D", vim.lsp.buf.type_definition, opts)
-		vim.keymap.set("n", "<leader>rn", vim.lsp.buf.rename, opts)
+		vim.keymap.set("n", "<leader>rn", "<cmd>Lspsaga rename", opts)
 		-- vim.keymap.set({ "n", "v" }, "<space>ca", vim.lsp.buf.code_action, opts)
-		vim.keymap.set({ "n", "v" }, "<leader>ca", "<cmd>CodeActionMenu<CR>", opts) -- nvim-code-action-menu.nvim
+		vim.keymap.set({ "n", "v" }, "<leader>ca", require("actions-preview").code_actions, opts) -- nvim-code-action-menu.nvim
 		-- vim.keymap.set("n", "gr", vim.lsp.buf.references, opts)
-		vim.keymap.set("n", "gr", function()
-			trouble.open("lsp_references")
-		end, opts)
+		vim.keymap.set("n", "gr", "<cmd>Lspsaga finder ref<CR>", opts)
 		vim.keymap.set("n", "<leader>ee", function()
 			trouble.open()
 		end, opts)

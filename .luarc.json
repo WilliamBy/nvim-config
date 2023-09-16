@@ -46,6 +46,6 @@
         "/home/w1_liamby/.local/share/nvim/lazy/nvim-notify/lua",
         "/home/w1_liamby/.local/share/nvim/lazy/lspsaga.nvim/lua",
         "/home/w1_liamby/.local/share/nvim/lazy/nvim-dap/lua",
-        "/home/w1_liamby/.config/nvim/lua"
+        "/home/w1_liamby/.config/nvim/"
     ]
 }

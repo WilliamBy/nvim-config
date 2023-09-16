@@ -31,6 +31,7 @@ local plugins = {
 		"nvim-lualine/lualine.nvim", -- 状态栏
 		"akinsho/bufferline.nvim", -- buffer分割线
 		"nvim-tree/nvim-tree.lua", -- 文档树
+		"goolord/alpha-nvim", -- 启动页
 		dependencies = { { "nvim-tree/nvim-web-devicons" } },
 	},
 	"famiu/bufdelete.nvim", --优雅地删除buffer
@@ -42,7 +43,7 @@ local plugins = {
 	},
 	{
 		"folke/trouble.nvim", -- 诊断美化框架
-		dependencies = { "nvim-tree/nvim-web-devicons" },
+		dependencies = { { "nvim-tree/nvim-web-devicons" } },
 		opts = {},
 	},
 	{
@@ -51,10 +52,12 @@ local plugins = {
 		event = "LspAttach",
 	},
 	-- "christoomey/vim-tmux-navigator",
-	-- "p00f/nvim-ts-rainbow", -- 配合treesitter，不同括号颜色区分
 	{
 		"HiPhish/rainbow-delimiters.nvim",
-		dependencies = { "nvim-treesitter/nvim-treesitter" },
+		dependencies = { { "nvim-treesitter/nvim-treesitter" } },
+	},
+	{
+		"MunifTanjim/nui.nvim", -- UI库
 	},
 
 	-- lsp & mason
@@ -74,13 +77,14 @@ local plugins = {
 	{
 		"nvimdev/lspsaga.nvim",
 		dependencies = {
-			"nvim-treesitter/nvim-treesitter", -- optional
+			{ "nvim-treesitter/nvim-treesitter" }, -- optional
 			"nvim-tree/nvim-web-devicons", -- optional
 		},
 		event = "LspAttach", -- lazy load when lsp attach
 	},
 	{
-		"weilbith/nvim-code-action-menu",
+		-- "weilbith/nvim-code-action-menu",   -- enhanced code action window
+		"aznhe21/actions-preview.nvim",
 		event = "LspAttach",
 	},
 	{
@@ -108,6 +112,10 @@ local plugins = {
 
 	"windwp/nvim-autopairs", -- 自动补全括号
 	-- 其他编辑功能
+	{
+		"nvim-treesitter/nvim-treesitter-textobjects",
+		dependencies = { { "nvim-treesitter/nvim-treesitter" } },
+	},  -- 基于 treesitter 的 textobjects 扩充
 	"numToStr/Comment.nvim", -- gcc和gc注释
 	{
 		"kylechui/nvim-surround",
@@ -151,6 +159,40 @@ local plugins = {
 	},
 
 	{ "akinsho/toggleterm.nvim", version = "*", opts = {} },
+
+	-- 代码生成相关
+	{
+		"danymat/neogen", -- 注释生成
+		dependencies = { "nvim-treesitter/nvim-treesitter" },
+		config = true,
+		-- Uncomment next line if you want to follow only stable versions
+		-- version = "*"
+	},
+
+	{
+		"norcalli/nvim-colorizer.lua", -- 颜色代码效果实时预览
+		config = function()
+			require("colorizer").setup({
+				"*",
+			}, {
+				RGB = true, -- #RGB hex codes
+				RRGGBB = true, -- #RRGGBB hex codes
+				names = true, -- "Name" codes like Blue
+				RRGGBBAA = true, -- #RRGGBBAA hex codes
+				rgb_fn = true, -- CSS rgb() and rgba() functions
+				hsl_fn = true, -- CSS hsl() and hsla() functions
+				css = true, -- Enable all CSS features: rgb_fn, hsl_fn, names, RGB, RRGGBB
+				css_fn = true, -- Enable all CSS *functions*: rgb_fn, hsl_fn
+				-- Available modes: foreground, background
+				mode = "background", -- Set the display mode.
+			})
+		end,
+	},
+
+	{
+		"ahmedkhalf/project.nvim",
+		dependencies = { { "nvim-telescope/telescope.nvim" } }, -- 项目管理
+	},
 }
 local opts = {} -- 注意要定义这个变量
 
