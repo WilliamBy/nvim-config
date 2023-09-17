@@ -19,6 +19,7 @@ require("plugins.ui.gitsigns")
 require("plugins.ui.terminal")
 require("plugins.ui.indent-scope")
 require("plugins.ui.alpha")
+require("lua.plugins.ui.nui")
 
 -- 编辑功能
 require("plugins.editor.comment")

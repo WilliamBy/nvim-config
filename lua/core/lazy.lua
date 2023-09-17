@@ -115,7 +115,7 @@ local plugins = {
 	{
 		"nvim-treesitter/nvim-treesitter-textobjects",
 		dependencies = { { "nvim-treesitter/nvim-treesitter" } },
-	},  -- 基于 treesitter 的 textobjects 扩充
+	}, -- 基于 treesitter 的 textobjects 扩充
 	"numToStr/Comment.nvim", -- gcc和gc注释
 	{
 		"kylechui/nvim-surround",
@@ -146,6 +146,14 @@ local plugins = {
 	{
 		"skywind3000/asynctasks.vim", -- 异步任务插件
 		dependencies = { { "skywind3000/asyncrun.vim" } },
+	},
+	{
+		"GustavoKatel/telescope-asynctasks.nvim",
+		dependencies = {
+			{ "skywind3000/asynctasks.vim" },
+			{ "nvim-telescope/telescope.nvim" },
+			{ "nvim-lua/popup.nvim" },
+		},
 	},
 
 	{

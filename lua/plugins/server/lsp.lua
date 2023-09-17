@@ -2,9 +2,10 @@
 -- 建议按照 mason >> mason-lspconfig >> nvim-lspconfig >> lspsaga >> lsp_signature的顺序配置
 -- 要配置的LSP列表，该变量会被导出以供其他lua文件复用
 LSPs = {
-	"lua_ls", -- lua_language_server 别名
-	"clangd",
-	"bashls",
+	"lua_ls", -- lua
+	"clangd",   -- c/c++
+	"bashls",   -- shell
+    "spectral", -- json & yaml
 } -- 每次mason增加新lsp都要在此处登记
 
 -- 1. mason
@@ -56,6 +57,7 @@ saga.setup({
 	},
 	outline = {
 		layout = "float",
+        win_width = 40,
 	},
 })
 

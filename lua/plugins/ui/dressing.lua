@@ -86,7 +86,7 @@ require("dressing").setup({
 			size = nil,
 			relative = "editor",
 			border = {
-				style = "rounded",
+				style = "single",
 			},
 			buf_options = {
 				swapfile = false,

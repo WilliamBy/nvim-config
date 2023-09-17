@@ -14,5 +14,20 @@
             "}"
         ],
         "description": "PAT 答题模板"
+    },
+    "boot_io_cpp": {
+        "prefix": "io_boot",
+        "body": [
+            "std::ios::sync_with_stdio(false);",
+            "std::cin.tie(0);"
+        ]
+    },
+    "macro_debug": {
+        "prefix": "#debug",
+        "body": [
+            "#ifdef DEBUG",
+            "$1",
+            "#endif"
+        ]
     }
 }

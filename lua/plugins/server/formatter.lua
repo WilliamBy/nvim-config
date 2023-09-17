@@ -20,7 +20,9 @@ require("formatter").setup({
                     args = {
                         "-assume-filename",
                         util.escape_path(util.get_current_buffer_file_name()),
-                        "--style='{BasedOnStyle: llvm, IndentWidth: 4}'",
+                        "--style=file",
+                        -- "--fallback-style='{BasedOnStyle: llvm, IndentWidth: 4}'",
+                        "--fallback-style=LLVM",
                     },
                     stdin = true,
                     try_node_modules = true,
@@ -28,6 +30,9 @@ require("formatter").setup({
             end
         },
         json = {
+            require("formatter.filetypes.json").prettier
+        },
+        yaml = {
             require("formatter.filetypes.json").prettier
         },
         shell = {

@@ -45,11 +45,17 @@ end
 -- 为编辑页面配置自动补全
 cmp.setup({
 	window = {
-		completion = { border = { "/", "-", "\\", "|", "/", "-", "\\", "|" }, scrollbar = false },
+		completion = {
+			-- border = { "/", "-", "\\", "|", "/", "-", "\\", "|" },
+			border = { "┏", "━", "┓", "┃", "┛", "━", "┗", "┃" },
+			scrollbar = false,
+			winhighlight = "Normal:Pmenu,FloatBorder:Pmenu,CursorLine:lualine_a_normal,Search:IncSearch",
+		},
 		documentation = {
-			border = { "+", "~", "+", "|", "+", "~", "+", "|" },
+			-- border = { "+", "~", "+", "|", "+", "~", "+", "|" },
+			border = { "┏", "━", "┓", "┃", "┛", "━", "┗", "┃" },
 			scrollbar = true,
-			winhighlight = "Normal:Pmenu,FloatBorder:Pmenu,CursorLine:PmenuThumb,Search:IncSearch",
+			winhighlight = "Normal:Pmenu,FloatBorder:Pmenu,CursorLine:lualine_a_normal,Search:IncSearch",
 		},
 	},
 	snippet = {
@@ -79,7 +85,7 @@ cmp.setup({
 					word = word .. "~"
 				end
 				vim_item.abbr = word
-                -- vim_item.menu =
+				-- vim_item.menu =
 
 				return vim_item
 			end,
@@ -88,7 +94,7 @@ cmp.setup({
 	mapping = cmp.mapping.preset.insert({
 		["<C-b>"] = cmp.mapping.scroll_docs(-4),
 		["<C-f>"] = cmp.mapping.scroll_docs(4),
-        ["<C-c>"] = cmp.mapping.complete({}),
+		["<C-c>"] = cmp.mapping.complete({}),
 		["<C-e>"] = cmp.mapping.abort(), -- 取消补全，esc也可以退出
 		["<CR>"] = cmp.mapping.confirm({ select = true }),
 
