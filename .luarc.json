@@ -1,7 +1,8 @@
 {
     "workspace.checkThirdParty": false,
     "diagnostics.disable": [
-        "missing-fields"
+        "missing-fields",
+        "unused-local"
     ],
     "workspace.library": [
         "/home/w1_liamby/.local/share/nvim/lazy/neodev.nvim/types/stable",

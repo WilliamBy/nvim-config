@@ -8,6 +8,8 @@ require("nvim-treesitter.configs").setup({
 		"cpp",
 		"javascript",
 		"json",
+        "jsonc",
+        "json5",
 		"lua",
 		"python",
 		"typescript",
@@ -16,6 +18,14 @@ require("nvim-treesitter.configs").setup({
 		"rust",
 		"markdown",
 		"markdown_inline",
+        "java",
+        "doxygen",
+        "yaml",
+        "toml",
+        "html",
+        "css",
+        "sql",
+        "comment",
 	}, -- one of "all" or a list of languages
 
 	highlight = { enable = true },

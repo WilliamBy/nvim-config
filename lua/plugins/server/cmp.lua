@@ -65,44 +65,27 @@ cmp.setup({
 	},
 	formatting = {
 		fields = {
-			cmp.ItemField.Kind,
 			cmp.ItemField.Abbr,
-			cmp.ItemField.Menu,
+			cmp.ItemField.Kind,
 		},
 		format = require("lspkind").cmp_format({
-			mode = "symbol",
-			cb = function(entry, vim_item)
-				-- Get the full snippet (and only keep first line)
-				local word = entry:get_insert_text()
-				if entry.completion_item.insertTextFormat == types.lsp.InsertTextFormat.Snippet then
-					word = vim.lsp.util.parse_snippet(word)
-				end
-				word = str.oneline(word)
-				if
-					entry.completion_item.insertTextFormat == types.lsp.InsertTextFormat.Snippet
-					and string.sub(vim_item.abbr, -1, -1) == "~"
-				then
-					word = word .. "~"
-				end
-				vim_item.abbr = word
-				-- vim_item.menu =
-
-				return vim_item
-			end,
+			mode = "symbol_text",
+			maxwidth = 25,
+			ellipsis_char = "...", -- when popup menu exceed maxwidth, the truncated part would show ellipsis_char instead (must define maxwidth first)
 		}),
 	},
 	mapping = cmp.mapping.preset.insert({
 		["<C-b>"] = cmp.mapping.scroll_docs(-4),
 		["<C-f>"] = cmp.mapping.scroll_docs(4),
+		["<C-u>"] = cmp.mapping.scroll_docs(-2),
+		["<C-d>"] = cmp.mapping.scroll_docs(2),
 		["<C-c>"] = cmp.mapping.complete({}),
 		["<C-e>"] = cmp.mapping.abort(), -- 取消补全，esc也可以退出
 		["<CR>"] = cmp.mapping.confirm({ select = true }),
 
-		["<Tab>"] = cmp.mapping(function(fallback) -- 补全项上下选择
+		["<Tab>"] = cmp.mapping(function(fallback)
 			if cmp.visible() then
 				cmp.select_next_item()
-			elseif luasnip.expandable() then
-				luasnip.expand()
 			elseif luasnip.expand_or_jumpable() then
 				luasnip.expand_or_jump()
 			elseif neogen.jumpable() then
@@ -160,4 +143,12 @@ cmp.setup.cmdline(":", {
 	}, {
 		{ name = "cmdline" },
 	}),
+})
+
+-- 为不同的filetype设定自动补全
+-- tip：查看当前buffer的filetype —— `:lua =vim.bo.filetype`
+cmp.setup.filetype("DressingInput", {
+	sources = {
+		cmp.config.sources({ name = "path" }),
+	},
 })

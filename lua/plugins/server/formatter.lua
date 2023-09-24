@@ -2,6 +2,7 @@
 local util = require("formatter.util")
 
 -- Provides the Format, FormatWrite, FormatLock, and FormatWriteLock commands
+---@diagnostic disable-next-line: undefined-field
 require("formatter").setup({
     -- Enable or disable logging
     logging = true,
@@ -29,14 +30,20 @@ require("formatter").setup({
                 }
             end
         },
+        java = {
+            require("formatter.filetypes.java").clangformat
+        },
         json = {
             require("formatter.filetypes.json").prettier
         },
         yaml = {
-            require("formatter.filetypes.json").prettier
+            require("formatter.filetypes.yaml").prettier
         },
         shell = {
             require("formatter.filetypes.sh").shfmt
+        },
+        python = {
+            require("formatter.filetypes.python").pyment
         },
         -- Use the special "*" filetype for defining formatter configurations on
         -- any filetype

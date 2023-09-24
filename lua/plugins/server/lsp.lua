@@ -3,9 +3,12 @@
 -- 要配置的LSP列表，该变量会被导出以供其他lua文件复用
 LSPs = {
 	"lua_ls", -- lua
-	"clangd",   -- c/c++
-	"bashls",   -- shell
-    "spectral", -- json & yaml
+	"clangd", -- c/c++
+	"bashls", -- shell
+	"spectral", -- json & yaml
+	"marksman", -- markdown
+	"pylsp", -- python
+	"jdtls", -- java
 } -- 每次mason增加新lsp都要在此处登记
 
 -- 1. mason
@@ -57,7 +60,7 @@ saga.setup({
 	},
 	outline = {
 		layout = "float",
-        win_width = 40,
+		win_width = 40,
 	},
 })
 
@@ -119,7 +122,7 @@ require("lsp_signature").setup({
 	toggle_key = "<C-k>", -- toggle signature on and off in insert mode,  e.g. toggle_key = '<M-x>'
 	toggle_key_flip_floatwin_setting = false, -- true: toggle float setting after toggle key pressed
 
-	select_signature_key = "<S-k>", -- cycle to next signature, e.g. '<M-n>' function overloading
+	select_signature_key = "gk", -- cycle to next signature, e.g. '<M-n>' function overloading
 	move_cursor_key = nil, -- imap, use nvim_set_current_win to move cursor between current win and floating
 })
 
@@ -182,21 +185,21 @@ trouble.setup({
 })
 
 -- 6. actions-preview
-require("actions-preview").setup {
-  telescope = {
-    sorting_strategy = "ascending",
-    layout_strategy = "vertical",
-    layout_config = {
-      width = 0.8,
-      height = 0.9,
-      prompt_position = "top",
-      preview_cutoff = 20,
-      preview_height = function(_, _, max_lines)
-        return max_lines - 15
-      end,
-    },
-  },
-}
+require("actions-preview").setup({
+	telescope = {
+		sorting_strategy = "ascending",
+		layout_strategy = "vertical",
+		layout_config = {
+			width = 0.8,
+			height = 0.9,
+			prompt_position = "top",
+			preview_cutoff = 20,
+			preview_height = function(_, _, max_lines)
+				return max_lines - 15
+			end,
+		},
+	},
+})
 
 -- Global mappings.
 -- See `:help vim.diagnostic.*` for documentation on any of the below functions
@@ -228,7 +231,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		vim.keymap.set("n", "gi", "<cmd>Lspsaga finder imp<CR>", opts)
 		vim.keymap.set({ "n", "i", "v" }, "<C-k>", require("lsp_signature").toggle_float_win, opts)
 		vim.keymap.set("n", "<leader>D", vim.lsp.buf.type_definition, opts)
-		vim.keymap.set("n", "<leader>rn", "<cmd>Lspsaga rename", opts)
+		vim.keymap.set("n", "<leader>rn", "<cmd>Lspsaga rename<cr>", opts)
 		-- vim.keymap.set({ "n", "v" }, "<space>ca", vim.lsp.buf.code_action, opts)
 		vim.keymap.set({ "n", "v" }, "<leader>ca", require("actions-preview").code_actions, opts) -- nvim-code-action-menu.nvim
 		-- vim.keymap.set("n", "gr", vim.lsp.buf.references, opts)
@@ -263,5 +266,4 @@ vim.api.nvim_create_autocmd("LspAttach", {
 	end,
 })
 
--- 模块导出
 return { lsp_list = LSPs }

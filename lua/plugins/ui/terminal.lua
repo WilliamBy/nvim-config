@@ -44,5 +44,5 @@ end
 
 vim.api.nvim_create_user_command("LazyGit", "lua _lazygit_toggle()", {})
 vim.api.nvim_set_keymap("n", "<leader>wg", "<cmd>lua _lazygit_toggle()<CR>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("n", "<c-`>", "<cmd>ToggleTerm direction=horizontal<CR>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("n", "<c-\\>", "<cmd>ToggleTerm direction=float<CR>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("n", "<c-`>", "<cmd>ToggleTerm direction=float<CR>", { noremap = true, silent = true })
+vim.api.nvim_set_keymap("n", "<c-\\>", "<cmd>ToggleTerm direction=horizontal<CR>", { noremap = true, silent = true })

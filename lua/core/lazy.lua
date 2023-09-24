@@ -16,7 +16,6 @@ local plugins = {
 	"folke/neodev.nvim", --为 nvim lua 插件提供lsp支持
 
 	-- UI
-	-- "navarasu/onedark.nvim", -- 主题
 	{
 		"folke/tokyonight.nvim",
 		lazy = false,
@@ -47,22 +46,43 @@ local plugins = {
 		opts = {},
 	},
 	{
-		"echasnovski/mini.indentscope", -- 缩进空间标注
-		version = "*",
+		"lukas-reineke/indent-blankline.nvim", -- 缩进空间标注
 		event = "LspAttach",
 	},
 	-- "christoomey/vim-tmux-navigator",
 	{
+		{
+			"theHamsta/nvim-dap-virtual-text",
+			config = function()
+				require("nvim-dap-virtual-text").setup()
+			end,
+		},
 		"HiPhish/rainbow-delimiters.nvim",
 		dependencies = { { "nvim-treesitter/nvim-treesitter" } },
 	},
-	{
-		"MunifTanjim/nui.nvim", -- UI库
-	},
+	"MunifTanjim/nui.nvim", -- UI库
 
 	-- lsp & mason
 	"nvim-treesitter/nvim-treesitter", -- 语法高亮
-	"williamboman/mason.nvim",
+	{
+		"williamboman/mason.nvim",
+		opts = {
+			-- server needed to be installed except for lsps
+			ensure_installed = {
+				-- DAPs
+				"codelldb",
+				-- Linters
+				"jsonlint",
+				"shellcheck",
+				-- Formatters
+				"clang-format",
+				"shfmt",
+				"stylua",
+				"prettier",
+				"pyment",
+			},
+		},
+	},
 	"neovim/nvim-lspconfig", -- official lsp client config plugin
 	{
 		"williamboman/mason-lspconfig.nvim", -- 这个相当于mason.nvim和lspconfig的桥梁
@@ -109,7 +129,6 @@ local plugins = {
 			},
 		},
 	},
-
 	"windwp/nvim-autopairs", -- 自动补全括号
 	-- 其他编辑功能
 	{
@@ -137,6 +156,10 @@ local plugins = {
 		"nvim-telescope/telescope.nvim",
 		tag = "0.1.1", -- 文件检索
 		dependencies = { { "nvim-lua/plenary.nvim" } },
+	},
+	{
+		"nvim-telescope/telescope-fzf-native.nvim", -- telescope fzf extension
+		build = "cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build",
 	},
 
 	-- {
@@ -201,6 +224,8 @@ local plugins = {
 		"ahmedkhalf/project.nvim",
 		dependencies = { { "nvim-telescope/telescope.nvim" } }, -- 项目管理
 	},
+
+	"wakatime/vim-wakatime",
 }
 local opts = {} -- 注意要定义这个变量
 

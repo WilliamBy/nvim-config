@@ -13,10 +13,24 @@ telescope.setup({
 			},
 		},
 		borderchars = { "━", "┃", "━", "┃", "┏", "┓", "┛", "┗" },
+		multi_icon = "  ",
+		prompt_prefix = "  ",
+		selection_caret = "  ",
+        entry_prefix = "  ",
+	},
+	extensions = {
+		fzf = {
+			fuzzy = true, -- false will only do exact matching
+			override_generic_sorter = true, -- override the generic sorter
+			override_file_sorter = true, -- override the file sorter
+			case_mode = "smart_case", -- or "ignore_case" or "respect_case"
+			-- the default case_mode is "smart_case"
+		},
 	},
 })
 
 -- extensions
+telescope.load_extension("fzf") -- 使用 fzf 模糊搜索
 telescope.extensions.asynctasks.all()
 
 -- 进入telescope页面会是插入模式，回到正常模式就可以用j和k来移动了

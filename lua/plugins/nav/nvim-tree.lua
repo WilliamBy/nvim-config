@@ -121,6 +121,13 @@ local function on_attach(bufnr)
 end
 
 require("nvim-tree").setup({
+	sync_root_with_cwd = true,
+	respect_buf_cwd = true,
+	update_focused_file = {
+		enable = true,
+		update_root = true,
+	},
+	root_dirs = { ".root", ".git", ".project", ".svn", "package.json" },
 	modified = {
 		enable = true,
 		show_on_dirs = true,
@@ -228,6 +235,9 @@ require("nvim-tree").setup({
 	},
 	-- use vim.ui.select api (for dressing.nvim beautifying)
 	select_prompts = true,
+    live_filter = {
+        prefix = " 󰈳 ",
+    },
 })
 
 -- highlight group

@@ -25,7 +25,22 @@ require("lualine").setup({
 		lualine_a = { "mode" },
 		lualine_b = { "branch", "diff", "diagnostics" },
 		lualine_c = { "filename" },
-		lualine_x = { "encoding", "fileformat", "filetype" },
+		lualine_x = {
+			"encoding",
+			function()
+				local lspc_list = vim.lsp.get_active_clients({ bufnr = 0 })
+				local fmtstr = ""
+				for k, v in pairs(lspc_list) do
+					if k == 1 then
+						fmtstr = v.name
+					else
+						fmtstr = fmtstr .. "," .. v.name
+					end
+				end
+				return fmtstr == "" and "" or " " .. fmtstr
+			end,
+			"filetype",
+		},
 		lualine_y = { "progress" },
 		lualine_z = { "location" },
 	},
