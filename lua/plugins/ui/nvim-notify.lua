@@ -1,4 +1,8 @@
-vim.notify = require("notify") -- notify插件接管nvim原生通知api
+local _notify, notify = pcall(require, "notify")
+if not _notify then
+    return
+end
+vim.notify = notify -- notify插件接管nvim原生通知api
 
 local notify = require("notify")
 notify.setup({

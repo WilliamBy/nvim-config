@@ -6,13 +6,17 @@ require("core.utils")
 require("core.lazy")
 require("plugins.server.whichkey")
 
+-- 配置
+---------------
+require("configures.mason-ls")
+require("configures.jdtls-config")
 
 -- 插件
 ---------------
 -- 界面
 require("plugins.ui.lualine")
 require("plugins.ui.dressing")
-require("plugins.ui.nvim-notify")
+-- require("plugins.ui.nvim-notify")
 require("plugins.ui.theme")
 require("plugins.ui.bufferline")
 require("plugins.ui.gitsigns")

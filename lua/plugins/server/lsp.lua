@@ -1,17 +1,7 @@
 -- mason 体系插件配置
 -- 建议按照 mason >> mason-lspconfig >> nvim-lspconfig >> lspsaga >> lsp_signature的顺序配置
--- 要配置的LSP列表，该变量会被导出以供其他lua文件复用
-LSPs = {
-	"lua_ls", -- lua
-	"clangd", -- c/c++
-	"bashls", -- shell
-	"spectral", -- json & yaml
-	"marksman", -- markdown
-	"pylsp", -- python
-	"jdtls", -- java
-} -- 每次mason增加新lsp都要在此处登记
-
 -- 1. mason
+local mason_ls = require("configures.mason-ls")
 require("mason").setup({
 	ui = {
 		icons = {
@@ -24,12 +14,9 @@ require("mason").setup({
 
 -- 2. mason-lspconfig
 local lspconfig = require("lspconfig")
-require("mason-lspconfig").setup({
-	-- 确保安装，根据需要填写
-	ensure_installed = LSPs,
-})
+require("mason-lspconfig").setup({})
+-- lsp 自动配置，参考 :h mason-lspconfig-automatic-server-setup
 require("mason-lspconfig").setup_handlers({
-	-- lsp 自动配置，参考 :h mason-lspconfig-automatic-server-setup
 	-- 之后无需单独为lsp配置nvim-lspconfig
 
 	-- 通用配置
@@ -38,8 +25,14 @@ require("mason-lspconfig").setup_handlers({
 	end,
 
 	-- 独立配置
-	["lua_ls"] = function()
-		lspconfig["lua_ls"].setup({
+	["jdtls"] = function(_)
+		if vim.bo.filetype ~= "java" then
+			return
+		end
+		require("configures.jdtls-config").setup()
+	end, -- use nvim-jdtls config instead
+	["lua_ls"] = function(server_name)
+		lspconfig[server_name].setup({
 			-- needed by neodev.nvim
 			settings = { Lua = { completion = { callSnippet = "Replace" } } },
 		})
@@ -119,7 +112,7 @@ require("lsp_signature").setup({
 	shadow_blend = 36, -- if you using shadow as border use this set the opacity
 	shadow_guibg = "Black", -- if you using shadow as border use this set the color e.g. 'Green' or '#121315'
 	timer_interval = 200, -- default timer check interval set to lower value if you want to reduce latency
-	toggle_key = "<C-k>", -- toggle signature on and off in insert mode,  e.g. toggle_key = '<M-x>'
+	toggle_key = "<C-S-k>", -- toggle signature on and off in insert mode,  e.g. toggle_key = '<M-x>'
 	toggle_key_flip_floatwin_setting = false, -- true: toggle float setting after toggle key pressed
 
 	select_signature_key = "gk", -- cycle to next signature, e.g. '<M-n>' function overloading
@@ -265,5 +258,3 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		--
 	end,
 })
-
-return { lsp_list = LSPs }

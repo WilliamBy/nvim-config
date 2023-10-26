@@ -37,7 +37,7 @@ local plugins = {
 	{
 		"lewis6991/gitsigns.nvim", -- 左则git提示
 		"stevearc/dressing.nvim", -- ui 美化（主要是 vim.input & vim.select）
-		"rcarriga/nvim-notify", -- 通知美化框架
+		-- "rcarriga/nvim-notify", -- 通知美化框架
 		event = "VeryLazy",
 	},
 	{
@@ -68,19 +68,7 @@ local plugins = {
 		"williamboman/mason.nvim",
 		opts = {
 			-- server needed to be installed except for lsps
-			ensure_installed = {
-				-- DAPs
-				"codelldb",
-				-- Linters
-				"jsonlint",
-				"shellcheck",
-				-- Formatters
-				"clang-format",
-				"shfmt",
-				"stylua",
-				"prettier",
-				"pyment",
-			},
+			ensure_installed = require("configures.mason-ls").all,
 		},
 	},
 	"neovim/nvim-lspconfig", -- official lsp client config plugin
@@ -88,6 +76,7 @@ local plugins = {
 		"williamboman/mason-lspconfig.nvim", -- 这个相当于mason.nvim和lspconfig的桥梁
 		dependencies = { { "williamboman/mason.nvim" } },
 	},
+	-- "mfussenegger/nvim-jdtls",
 	{
 		"onsails/lspkind.nvim", -- 自动补全列表项图标
 		"mhartington/formatter.nvim",
