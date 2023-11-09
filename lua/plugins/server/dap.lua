@@ -13,7 +13,7 @@ dap.configurations.cpp = {
 		type = "lldb",
 		request = "launch",
 		program = function()
-			return utils.sync_ui_input("Program Path", vim.fn.getcwd() .. "/", "file")
+			return utils.sync_ui_input("Program Path", vim.fn.fnamemodify(vim.api.nvim_buf_get_name(0), ":p:r"), "file")
 		end,
 		cwd = "${workspaceFolder}",
 		stopAtEntry = false,

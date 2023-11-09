@@ -25,6 +25,10 @@ require("mason-lspconfig").setup_handlers({
 	end,
 
 	-- 独立配置
+	-- ["clangd"] = function(server_name)
+	-- 	lspconfig[server_name].setup({
+	-- 	})
+	-- end,
 	["jdtls"] = function(_)
 		if vim.bo.filetype ~= "java" then
 			return
