@@ -47,6 +47,7 @@ local plugins = {
 	},
 	{
 		"lukas-reineke/indent-blankline.nvim", -- 缩进空间标注
+		main = "ibl",
 		event = "LspAttach",
 	},
 	-- "christoomey/vim-tmux-navigator",
@@ -143,13 +144,11 @@ local plugins = {
 
 	{
 		"nvim-telescope/telescope.nvim",
-		tag = "0.1.1", -- 文件检索
+		tag = "0.1.5", -- 文件检索
 		dependencies = { { "nvim-lua/plenary.nvim" } },
 	},
-	{
-		"nvim-telescope/telescope-fzf-native.nvim", -- telescope fzf extension
-		build = "cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build",
-	},
+	-- 基于 cmake 构建，确保系统拥有 Cmake 以及对应平台的编译工具链
+	{ 'nvim-telescope/telescope-fzf-native.nvim', build = 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build' },
 
 	-- {
 	-- 	"stevearc/overseer.nvim", -- 任务插件

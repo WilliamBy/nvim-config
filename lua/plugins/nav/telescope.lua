@@ -1,5 +1,8 @@
 local telescope = require("telescope")
 local builtin = require("telescope.builtin")
+-- extensions
+telescope.load_extension("fzf") -- 使用 fzf 模糊搜索
+telescope.extensions.asynctasks.all()
 
 telescope.setup({
 	defaults = {
@@ -28,10 +31,6 @@ telescope.setup({
 		},
 	},
 })
-
--- extensions
-telescope.load_extension("fzf") -- 使用 fzf 模糊搜索
-telescope.extensions.asynctasks.all()
 
 -- 进入telescope页面会是插入模式，回到正常模式就可以用j和k来移动了
 
