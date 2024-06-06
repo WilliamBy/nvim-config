@@ -6,7 +6,7 @@ require("toggleterm").setup({
 
 -- It can be helpful to add mappings to make moving in and out of a terminal easier once toggled, whilst still keeping it open.
 function _G.set_terminal_keymaps()
-	local opts = { buffer = 0 }
+	local opts = { buffer = 0, silent = true }
 	vim.keymap.set("t", "<esc>", [[<C-\><C-n>]], opts)
 	-- vim.keymap.set("t", "jk", [[<C-\><C-n>]], opts)
 	vim.keymap.set("t", "<C-h>", [[<Cmd>wincmd h<CR>]], opts)
@@ -44,5 +44,4 @@ end
 
 vim.api.nvim_create_user_command("LazyGit", "lua _lazygit_toggle()", {})
 vim.api.nvim_set_keymap("n", "<leader>wg", "<cmd>lua _lazygit_toggle()<CR>", { noremap = true, silent = true })
-vim.api.nvim_set_keymap("n", "<c-`>", "<cmd>ToggleTerm direction=float<CR>", { noremap = true, silent = true })
 vim.api.nvim_set_keymap("n", "<c-\\>", "<cmd>ToggleTerm direction=horizontal<CR>", { noremap = true, silent = true })

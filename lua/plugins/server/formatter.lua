@@ -14,7 +14,6 @@ require("formatter").setup({
 			require("formatter.filetypes.lua").stylua,
 		},
 		cpp = {
-			-- require("formatter.filetypes.cpp").clangformat,
 			function()
 				return {
 					exe = "clang-format",
@@ -22,7 +21,6 @@ require("formatter").setup({
 						"-assume-filename",
 						util.escape_path(util.get_current_buffer_file_name()),
 						"--style=file",
-						-- "--fallback-style='{BasedOnStyle: llvm, IndentWidth: 4}'",
 						"--fallback-style=LLVM",
 					},
 					stdin = true,
@@ -38,7 +36,6 @@ require("formatter").setup({
 						"-assume-filename",
 						util.escape_path(util.get_current_buffer_file_name()),
 						"--style=file",
-						-- "--fallback-style='{BasedOnStyle: llvm, IndentWidth: 4}'",
 						"--fallback-style=LLVM",
 					},
 					stdin = true,
@@ -58,7 +55,15 @@ require("formatter").setup({
 		python = {
 			require("formatter.filetypes.python").pyment,
 		},
-        xml = {
+		xml = {
+			require("formatter.filetypes.xml").xmlformat,
+		},
+		go = {
+			require("formatter.filetypes.go").gofumpt,
+			require("formatter.filetypes.go").golines,
+		},
+        markdown = {
+            require("formatter.filetypes.markdown").prettier,
         },
 		-- Use the special "*" filetype for defining formatter configurations on
 		-- any filetype
@@ -71,4 +76,4 @@ require("formatter").setup({
 })
 
 -- keymap
-vim.keymap.set("n", "<leader>bf", ":FormatLock<CR>") -- 格式化
+vim.keymap.set("n", "<leader>bf", "<cmd>Format<CR>", { silent = true }) -- 格式化

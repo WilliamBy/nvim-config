@@ -43,13 +43,11 @@ wk.setup({
 	},
 	window = {
 		border = "none", -- none, single, double, shadow
-		position = function() -- dynamic position (not working however)
-			return require("core.utils").curor_lower_win() and "top" or "bottom"
-		end, -- bottom, top
+		position = "bottom",
 		margin = { 1, 0, 1, 0 }, -- extra window margin [top, right, bottom, left]. When between 0 and 1, will be treated as a percentage of the screen size.
 		padding = { 1, 2, 1, 2 }, -- extra window padding [top, right, bottom, left]
 		winblend = 0, -- value between 0-100 0 for fully opaque and 100 for fully transparent
-		zindex = 1000, -- positive value to position WhichKey above other floating windows.
+		zindex = 20000, -- positive value to position WhichKey above other floating windows.
 	},
 	layout = {
 		height = { min = 4, max = 25 }, -- min and max height of the columns
@@ -102,6 +100,7 @@ wk.register({
 		r = { "lsp_references" },
 		q = { "quickfixs" },
 		f = { "float diagnostics" },
+		t = { "todo list" },
 	},
 
 	f = {
@@ -109,10 +108,13 @@ wk.register({
 		f = "files",
 		g = "live_grep",
 		o = "treesitter",
+		s = "symbol",
 		n = "notifictions",
 		h = "helps",
 		b = "buffers",
-        p = "projects",
+		p = "projects",
+		r = "recent file",
+        c = "git commits"
 	},
 
 	w = {
@@ -121,8 +123,10 @@ wk.register({
 		h = "split horizontal",
 		v = "split vertical",
 		o = "outline",
-        g = "lazygit",
-        r = "ref+def+imp"
+		g = "lazygit",
+		r = "ref+def+imp",
+		e = "Trouble",
+        t = "translate"
 	},
 
 	s = "hop",
@@ -131,31 +135,46 @@ wk.register({
 		name = "buffer",
 		f = "format",
 		w = "write",
+		l = "lint",
 		q = "quit",
+		d = "toggle diagnostics",
 	},
 
-    d = {
-        name = "dap",
-        b = "toggle breakpoint",
-        B = "set breakpoint",
-        r = "open repl",
-        l = "run last",
-        h = "hover",
-        p = "preview",
-        f = "frames",
-        s = "scopes",
-    },
+	d = {
+		name = "dap",
+		b = "toggle breakpoint",
+		r = "open repl",
+		l = "run last",
+		h = "hover",
+		p = "preview",
+		f = "frames",
+		s = "scopes",
+	},
 
-    n = {
-        name = "no",
-        n = "notify",
-        h = "highlight",
-    }
+	n = {
+		name = "no",
+		n = "notify",
+		h = "highlight",
+		d = "diagnostics",
+	},
+
+	r = {
+		n = "rename",
+	},
+
+	g = {
+		name = "generate/insert",
+		c = { "comments" },
+	},
+
+	D = "declaration",
 }, { prefix = "<leader>" })
 
 wk.register({
 	name = "goto",
-    D = "declaration",
-    d = "definition",
-    r = "lsp_references"
+	D = "type_definitions",
+	d = "definition",
+	r = "lsp_references",
+	i = "impelement",
+    z = { "<cmd>TransToZH<cr>", "translate word" }
 }, { prefix = "g" })

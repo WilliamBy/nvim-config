@@ -2,9 +2,13 @@
 -- globle options
 vim.g.loaded_netrw = 1
 vim.g.loaded_netrwPlugin = 1
+-- float window size
+local HEIGHT_RATIO = 0.8 -- You can change this
+local WIDTH_RATIO = 0.25 -- You can change this too
 
 local function on_attach(bufnr)
 	local api = require("nvim-tree.api")
+	local treeutils = require("plugins.nav.treeutils")
 
 	local function opts(desc)
 		return { desc = "nvim-tree: " .. desc, buffer = bufnr, noremap = true, silent = true, nowait = true }
@@ -118,16 +122,18 @@ local function on_attach(bufnr)
 	vim.keymap.set("n", "mv", api.marks.bulk.move, opts("Move Bookmarked"))
 	vim.keymap.set("n", "<C-x>", api.node.navigate.opened.next, opts("Next opened"))
 	vim.keymap.set("n", "<C-z>", api.node.navigate.opened.prev, opts("Prev opened"))
+	vim.keymap.set("n", "<c-f>", treeutils.launch_find_files, opts("Launch Find Files"))
+	vim.keymap.set("n", "<c-g>", treeutils.launch_live_grep, opts("Launch Live Grep"))
 end
 
 require("nvim-tree").setup({
-	-- sync_root_with_cwd = true,
+	sync_root_with_cwd = true,
 	-- respect_buf_cwd = true,
-	-- update_focused_file = {
-	-- 	enable = true,
-	-- 	update_root = true,
-	-- },
-	-- root_dirs = {".mvn", "pom.xml", ".root", ".git", ".project", ".svn", "package.json" },
+	update_focused_file = {
+		enable = true,
+		update_root = true,
+	},
+	root_dirs = require("configures.general").root_ls,
 	modified = {
 		enable = true,
 		show_on_dirs = true,
@@ -217,8 +223,30 @@ require("nvim-tree").setup({
 		},
 	},
 	view = {
-		side = "left",
-		signcolumn = "yes",
+		float = {
+			enable = false,
+			open_win_config = function()
+				local screen_w = vim.opt.columns:get()
+				local screen_h = vim.opt.lines:get() - vim.opt.cmdheight:get()
+				local window_w = screen_w * WIDTH_RATIO
+				local window_h = screen_h * HEIGHT_RATIO
+				local window_w_int = math.floor(window_w)
+				local window_h_int = math.floor(window_h)
+				local center_x = (screen_w - window_w) / 2
+				local center_y = ((vim.opt.lines:get() - window_h) / 2) - vim.opt.cmdheight:get()
+				return {
+					border = "rounded",
+					relative = "editor",
+					row = center_y,
+					col = center_x,
+					width = window_w_int,
+					height = window_h_int,
+				}
+			end,
+		},
+		-- width = function()
+		-- 	return math.floor(vim.opt.columns:get() * WIDTH_RATIO)
+		-- end,
 	},
 
 	on_attach = on_attach,
@@ -235,12 +263,12 @@ require("nvim-tree").setup({
 	},
 	-- use vim.ui.select api (for dressing.nvim beautifying)
 	select_prompts = true,
-    live_filter = {
-        prefix = " 󰈳 ",
-    },
+	live_filter = {
+		prefix = " 󰈳 ",
+	},
 })
 
 -- highlight group
 vim.api.nvim_set_hl(0, "NvimTreeOpenedFile", { fg = "Gray90" })
 -- nvim-tree
-vim.keymap.set("n", "<leader>m", ":NvimTreeToggle<CR>") -- 开关文件树
+vim.keymap.set("n", "<leader>m", ":NvimTreeToggle<CR>", { silent = true }) -- 开关文件树

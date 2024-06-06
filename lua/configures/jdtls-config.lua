@@ -1,4 +1,5 @@
 M = {}
+---@diagnostic disable-next-line: duplicate-set-field
 function M.setup()
 	local mason_root = require("mason.settings").current.install_root_dir
 	local root_markers = { ".git", "pom.xml", "mvnw", "gradlew", ".idea", ".iml", ".root", ".vscode" }
@@ -9,7 +10,8 @@ function M.setup()
 	local jdtls_cache = vim.fn.stdpath("cache") .. "/workspace/" .. project_name
 	local jdtls_jar = vim.fn.glob(mason_root .. "/packages/jdtls/plugins/*.jar")
 	local jdtls_cfg = mason_root .. "/packages/jdtls/config_linux"
-    local java_debug_jar = vim.fn.glob(mason_root .. "/packages/java-debug-adapter/extension/server/com.microsoft.java.debug.plugin-*.jar")
+	local java_debug_jar =
+		vim.fn.glob(mason_root .. "/packages/java-debug-adapter/extension/server/com.microsoft.java.debug.plugin-*.jar")
 	-- See `:help vim.lsp.start_client` for an overview of the supported `config` options.
 	local config = {
 		-- The command that starts the language server
@@ -110,8 +112,8 @@ function M.setup()
 		-- If you don't plan on using the debugger or other eclipse.jdt.ls plugins you can remove this
 		init_options = {
 			bundles = {
-                java_debug_jar
-            },
+				java_debug_jar,
+			},
 		},
 	}
 	local _jdtls, jdtls = pcall(require, "jdtls")

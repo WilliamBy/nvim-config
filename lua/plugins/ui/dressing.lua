@@ -63,7 +63,7 @@ require("dressing").setup({
 		trim_prompt = true,
 		-- Options for telescope selector
 		-- These are passed into the telescope picker directly. Can be used like:
-		telescope = require('telescope.themes').get_dropdown({}),
+		telescope = require('telescope.themes').get_cursor({}),
 
 		-- Options for nui Menu
 		nui = {
@@ -71,14 +71,14 @@ require("dressing").setup({
 			size = nil,
 			relative = "editor",
 			border = {
-				style = "single",
+				style = "rounded",
 			},
 			buf_options = {
 				swapfile = false,
 				filetype = "DressingSelect",
 			},
 			win_options = {
-				winblend = 10,
+				winblend = 0,
 			},
 			max_width = 80,
 			max_height = 40,

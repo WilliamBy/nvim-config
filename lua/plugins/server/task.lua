@@ -8,8 +8,9 @@
 -- 告诉 asyncrun 运行时自动打开高度为 6 的 quickfix 窗口，不然你看不到任何输出，除非你自己手动用 :copen 打开它。
 vim.g.asyncrun_open = 6
 vim.g.asynctasks_term_pos = "bottom"
+local opts = { silent = true }
 
-vim.keymap.set({ "v", "n", "i" }, "<f5>", ":AsyncTask file-run<CR>")
-vim.keymap.set({ "v", "n", "i" }, "<f9>", ":AsyncTask file-build<CR>")
-vim.keymap.set({ "v", "n", "i" }, "<f6>", ":AsyncTask project-run<CR>")
-vim.keymap.set({ "v", "n", "i" }, "<f10>", ":AsyncTask project-build<CR>")
+vim.keymap.set({ "v", "n", "i" }, "<f5>", ":AsyncTask file-run<CR>", opts)
+vim.keymap.set({ "v", "n", "i" }, "<f9>", ":AsyncTask file-build<CR>", opts)
+vim.keymap.set({ "v", "n", "i" }, "<f6>", ":AsyncTask project-run<CR>", opts)
+vim.keymap.set({ "v", "n", "i" }, "<f10>", ":AsyncTask project-build<CR>", opts)

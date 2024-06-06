@@ -2,45 +2,46 @@
 local dap = require("dap")
 local utils = require("core.utils")
 
-dap.adapters.lldb = {
-  type = 'executable',
-  command = '/usr/bin/lldb-vscode-14', -- adjust as needed, must be absolute path
-  name = 'lldb'
-}
-dap.configurations.cpp = {
-	{
-		name = "Launch file",
-		type = "lldb",
-		request = "launch",
-		program = function()
-			return utils.sync_ui_input("Program Path", vim.fn.fnamemodify(vim.api.nvim_buf_get_name(0), ":p:r"), "file")
-		end,
-		cwd = "${workspaceFolder}",
-		stopAtEntry = false,
-		-- setupCommands = {
-		-- 	{
-		-- 		text = "-enable-pretty-printing",
-		-- 		description = "enable pretty printing",
-		-- 		ignoreFailures = false,
-		-- 	},
-		-- },
-        runInTerminal = true,
-	},
-}
+-- mason-nvim-dap 自动配置
+local mason_ls = require("configures.mason-ls")
+local dapconfig = require("mason-nvim-dap")
 
-dap.configurations.c = dap["configurations"].cpp
-dap.configurations.rust = dap["configurations"].cpp
+dapconfig.setup({
+	ensure_installed = mason_ls.dap,
+	automatic_installation = mason_ls.auto_install,
+	handlers = {
+		-- automatic config by mason-nvim-dap.nvim
+		function(config)
+			-- all sources with no handler get passed here
+
+			-- Keep original functionality
+			require("mason-nvim-dap").default_setup(config)
+		end,
+		-- custom config using dap.nvim
+		python = function(config)
+			config.adapters = {
+				type = "executable",
+				command = "/usr/bin/python3",
+				args = {
+					"-m",
+					"debugpy.adapter",
+				},
+			}
+			require("mason-nvim-dap").default_setup(config) -- don't forget this!
+		end,
+	},
+})
 
 -- keymap
-vim.keymap.set("n", "<F1>", "<cmd>DapContinue<cr>")
-vim.keymap.set("n", "<F2>", "<cmd>DapStepOver<cr>")
-vim.keymap.set("n", "<F3>", "<cmd>DapStepInto<cr>")
-vim.keymap.set("n", "<F4>", "<cmd>DapStepOut<cr>")
-vim.keymap.set("n", "<Leader>db", "<cmd>DapToggleBreakpoint<cr>")
-vim.keymap.set("n", "<Leader>dr", "<cmd>DapToggleRepl<cr>")
-vim.keymap.set("n", "<Leader>dl", "<cmd>DapLoadLaunchJSON<cr>")
-vim.keymap.set("n", "<Leader>dq", "<cmd>DapTerminate<cr>")
-vim.keymap.set("n", "<Leader>dt", "<cmd>lua require('dapui').toggle()")
+vim.keymap.set("n", "<F1>", "<cmd>DapContinue<cr>", { silent = true })
+vim.keymap.set("n", "<F2>", "<cmd>DapStepOver<cr>", { silent = true })
+vim.keymap.set("n", "<F3>", "<cmd>DapStepInto<cr>", { silent = true })
+vim.keymap.set("n", "<F4>", "<cmd>DapStepOut<cr>", { silent = true })
+vim.keymap.set("n", "<Leader>db", "<cmd>DapToggleBreakpoint<cr>", { silent = true })
+vim.keymap.set("n", "<Leader>dr", "<cmd>DapToggleRepl<cr>", { silent = true })
+vim.keymap.set("n", "<Leader>dl", "<cmd>DapLoadLaunchJSON<cr>", { silent = true })
+vim.keymap.set("n", "<Leader>dq", "<cmd>DapTerminate<cr>", { silent = true })
+vim.keymap.set("n", "<Leader>dt", "<cmd>lua require('dapui').toggle()<cr>", { silent = true })
 vim.keymap.set({ "n", "v" }, "<Leader>dh", function()
 	require("dap.ui.widgets").hover()
 end)

@@ -26,6 +26,9 @@ require("nvim-treesitter.configs").setup({
         "css",
         "sql",
         "comment",
+        "go",
+        "gomod",
+        "gosum",
 	}, -- one of "all" or a list of languages
 
 	highlight = { enable = true },

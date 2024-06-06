@@ -1,5 +1,8 @@
 local opt = vim.opt
 Util = {}
+-- local config support (.nvim.lua .nvimrc .exrc)
+opt.exrc = true
+
 -- 行号
 opt.relativenumber = true
 opt.number = true
@@ -11,8 +14,12 @@ opt.expandtab = true
 opt.autoindent = true
 opt.smartindent = true
 
--- 防止包裹
-opt.wrap = false
+-- 折行相关
+opt.wrap = true
+opt.wrapmargin = 2
+opt.linebreak = true
+opt.breakindent = true
+opt.showbreak = '> '
 
 -- 光标行
 opt.cursorline = true

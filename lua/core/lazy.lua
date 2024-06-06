@@ -16,8 +16,22 @@ local plugins = {
 	"folke/neodev.nvim", --为 nvim lua 插件提供lsp支持
 
 	-- UI
+	"MunifTanjim/nui.nvim", -- UI库
 	{
-		"folke/tokyonight.nvim",
+		"karb94/neoscroll.nvim",
+		enabled = function()
+			if vim.g.neovide then
+				return false
+			end
+			return true
+		end,
+		config = function()
+			require("neoscroll").setup({})
+		end,
+	},
+	{
+		"catppuccin/nvim",
+		name = "catppuccin",
 		lazy = false,
 		priority = 1000,
 		opts = {},
@@ -37,7 +51,6 @@ local plugins = {
 	{
 		"lewis6991/gitsigns.nvim", -- 左则git提示
 		"stevearc/dressing.nvim", -- ui 美化（主要是 vim.input & vim.select）
-		-- "rcarriga/nvim-notify", -- 通知美化框架
 		event = "VeryLazy",
 	},
 	{
@@ -50,38 +63,75 @@ local plugins = {
 		main = "ibl",
 		event = "LspAttach",
 	},
-	-- "christoomey/vim-tmux-navigator",
 	{
-		{
-			"theHamsta/nvim-dap-virtual-text",
-			config = function()
-				require("nvim-dap-virtual-text").setup()
-			end,
-		},
 		"HiPhish/rainbow-delimiters.nvim",
 		dependencies = { { "nvim-treesitter/nvim-treesitter" } },
 	},
-	"MunifTanjim/nui.nvim", -- UI库
-
-	-- lsp & mason
-	"nvim-treesitter/nvim-treesitter", -- 语法高亮
 	{
-		"williamboman/mason.nvim",
-		opts = {
-			-- server needed to be installed except for lsps
-			ensure_installed = require("configures.mason-ls").all,
+		"norcalli/nvim-colorizer.lua", -- 颜色代码效果实时预览
+		config = function()
+			require("colorizer").setup({
+				"*",
+			}, {
+				RGB = true, -- #RGB hex codes
+				RRGGBB = true, -- #RRGGBB hex codes
+				names = true, -- "Name" codes like Blue
+				RRGGBBAA = true, -- #RRGGBBAA hex codes
+				rgb_fn = true, -- CSS rgb() and rgba() functions
+				hsl_fn = true, -- CSS hsl() and hsla() functions
+				css = true, -- Enable all CSS features: rgb_fn, hsl_fn, names, RGB, RRGGBB
+				css_fn = true, -- Enable all CSS *functions*: rgb_fn, hsl_fn
+				-- Available modes: foreground, background
+				mode = "background", -- Set the display mode.
+			})
+		end,
+	},
+	{
+		"folke/noice.nvim",
+		event = "VeryLazy",
+		dependencies = {
+			-- if you lazy-load any plugin below, make sure to add proper `module="..."` entries
+			"MunifTanjim/nui.nvim",
+			-- OPTIONAL:
+			--   `nvim-notify` is only needed, if you want to use the notification view.
+			"rcarriga/nvim-notify",
 		},
 	},
+	{
+		"theHamsta/nvim-dap-virtual-text",
+		config = function()
+			require("nvim-dap-virtual-text").setup()
+		end,
+		dependencies = { { "mfussenegger/nvim-dap" }, { "nvim-treesitter/nvim-treesitter" } },
+	},
+	{
+		"RRethy/vim-illuminate",
+		-- event = "LspAttach"
+		dependencies = { "nvim-treesitter/nvim-treesitter" },
+	},
+	{
+		"NeogitOrg/neogit",
+		dependencies = {
+			"nvim-lua/plenary.nvim", -- required
+			"sindrets/diffview.nvim", -- optional - Diff integration
+			"nvim-telescope/telescope.nvim", -- optional
+		},
+		config = true,
+	},
+	-- lsp & mason
+	"nvim-treesitter/nvim-treesitter", -- 语法高亮
+	"williamboman/mason.nvim",
 	"neovim/nvim-lspconfig", -- official lsp client config plugin
 	{
 		"williamboman/mason-lspconfig.nvim", -- 这个相当于mason.nvim和lspconfig的桥梁
-		dependencies = { { "williamboman/mason.nvim" } },
+		dependencies = { { "williamboman/mason.nvim", "neovim/nvim-lspconfig" } },
 	},
 	-- "mfussenegger/nvim-jdtls",
 	{
 		"onsails/lspkind.nvim", -- 自动补全列表项图标
 		"mhartington/formatter.nvim",
 		"mfussenegger/nvim-lint",
+		"rshkarin/mason-nvim-lint",
 		event = "LspAttach",
 	},
 	{
@@ -93,7 +143,6 @@ local plugins = {
 		event = "LspAttach", -- lazy load when lsp attach
 	},
 	{
-		-- "weilbith/nvim-code-action-menu",   -- enhanced code action window
 		"aznhe21/actions-preview.nvim",
 		event = "LspAttach",
 	},
@@ -108,14 +157,29 @@ local plugins = {
 		dependencies = {
 			{
 				"onsails/lspkind.nvim",
-				"hrsh7th/cmp-path", -- 补全源：路径
-				"hrsh7th/cmp-cmdline", -- 补全源：命令行
 				"hrsh7th/cmp-nvim-lsp", -- cmp & lsp 桥梁
 				{
-					"L3MON4D3/LuaSnip", -- snippets引擎，nvim-cmp依赖
-					dependencies = { { "rafamadriz/friendly-snippets" } },
+					"saadparwaiz1/cmp_luasnip", -- luasnip & cmp 桥梁
+					dependencies = {
+						"L3MON4D3/LuaSnip",
+						-- follow latest release.
+						version = "v2.*", -- Replace <CurrentMajor> by the latest released major (first number of latest release)
+						-- install jsregexp (optional!).
+						build = "make install_jsregexp",
+						dependencies = { "rafamadriz/friendly-snippets" },
+					},
 				},
-				"saadparwaiz1/cmp_luasnip", -- luasnip & cmp 桥梁
+				"hrsh7th/cmp-path", -- 补全源：路径
+				"hrsh7th/cmp-cmdline", -- 补全源：命令行
+				"hrsh7th/cmp-buffer",
+				"davidsierradz/cmp-conventionalcommits",
+				{
+					"paopaol/cmp-doxygen",
+					dependencies = {
+						"nvim-treesitter/nvim-treesitter",
+						"nvim-treesitter/nvim-treesitter-textobjects",
+					},
+				},
 			},
 		},
 	},
@@ -135,11 +199,16 @@ local plugins = {
 		end,
 	},
 	"phaazon/hop.nvim", -- nvim easy motion
+	"pocco81/auto-save.nvim",
 
 	-- DAP
 	{
+		"jay-babu/mason-nvim-dap.nvim",
+		dependencies = { { "williamboman/mason.nvim", "mfussenegger/nvim-dap" } },
+	},
+	{
 		"rcarriga/nvim-dap-ui",
-		dependencies = { { "mfussenegger/nvim-dap" } },
+		dependencies = { { "nvim-neotest/nvim-nio", "mfussenegger/nvim-dap" } },
 	},
 
 	{
@@ -148,12 +217,10 @@ local plugins = {
 		dependencies = { { "nvim-lua/plenary.nvim" } },
 	},
 	-- 基于 cmake 构建，确保系统拥有 Cmake 以及对应平台的编译工具链
-	{ 'nvim-telescope/telescope-fzf-native.nvim', build = 'cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build' },
-
-	-- {
-	-- 	"stevearc/overseer.nvim", -- 任务插件
-	-- 	opts = {},
-	-- },
+	{
+		"nvim-telescope/telescope-fzf-native.nvim",
+		build = "cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Release && cmake --build build --config Release && cmake --install build --prefix build",
+	},
 	{
 		"skywind3000/asynctasks.vim", -- 异步任务插件
 		dependencies = { { "skywind3000/asyncrun.vim" } },
@@ -189,31 +256,70 @@ local plugins = {
 	},
 
 	{
-		"norcalli/nvim-colorizer.lua", -- 颜色代码效果实时预览
-		config = function()
-			require("colorizer").setup({
-				"*",
-			}, {
-				RGB = true, -- #RGB hex codes
-				RRGGBB = true, -- #RRGGBB hex codes
-				names = true, -- "Name" codes like Blue
-				RRGGBBAA = true, -- #RRGGBBAA hex codes
-				rgb_fn = true, -- CSS rgb() and rgba() functions
-				hsl_fn = true, -- CSS hsl() and hsla() functions
-				css = true, -- Enable all CSS features: rgb_fn, hsl_fn, names, RGB, RRGGBB
-				css_fn = true, -- Enable all CSS *functions*: rgb_fn, hsl_fn
-				-- Available modes: foreground, background
-				mode = "background", -- Set the display mode.
-			})
-		end,
-	},
-
-	{
 		"ahmedkhalf/project.nvim",
 		dependencies = { { "nvim-telescope/telescope.nvim" } }, -- 项目管理
 	},
 
+	{
+		"folke/todo-comments.nvim", -- todo list
+		dependencies = { "nvim-lua/plenary.nvim" },
+		opts = {},
+	},
+
 	"wakatime/vim-wakatime",
+	{ "niuiic/translate.nvim", dependencies = { "niuiic/core.nvim" } },
+
+	-- language specific
+	{
+		"ray-x/go.nvim",
+		dependencies = { -- optional packages
+			"ray-x/guihua.lua",
+			"neovim/nvim-lspconfig",
+			"nvim-treesitter/nvim-treesitter",
+		},
+		config = function()
+			require("go").setup()
+		end,
+		event = { "CmdlineEnter" },
+		ft = { "go", "gomod" },
+		build = ':lua require("go.install").update_all_sync()', -- if you need to install/update all binaries
+	},
+	{
+		"scalameta/nvim-metals",
+		dependencies = {
+			"nvim-lua/plenary.nvim",
+		},
+		ft = { "scala", "sbt", "java" },
+		opts = function()
+			local metals_config = require("metals").bare_config()
+			metals_config.on_attach = function(client, bufnr)
+				-- your on_attach function
+			end
+
+			return metals_config
+		end,
+		config = function(self, metals_config)
+			local nvim_metals_group = vim.api.nvim_create_augroup("nvim-metals", { clear = true })
+			vim.api.nvim_create_autocmd("FileType", {
+				pattern = self.ft,
+				callback = function()
+					require("metals").initialize_or_attach(metals_config)
+				end,
+				group = nvim_metals_group,
+			})
+		end,
+	},
+	-- external integration
+	{
+		"mikesmithgh/kitty-scrollback.nvim",
+		enabled = true,
+		lazy = true,
+		cmd = { "KittyScrollbackGenerateKittens", "KittyScrollbackCheckHealth" },
+		event = { "User KittyScrollbackLaunch" },
+		config = function()
+			require("kitty-scrollback").setup()
+		end,
+	},
 }
 local opts = {} -- 注意要定义这个变量
 

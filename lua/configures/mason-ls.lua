@@ -5,17 +5,26 @@ local lsp = {
 	"clangd", -- c/c++
 	"bashls", -- shell
 	"spectral", -- json & yaml
-	"marksman", -- markdown
-	"pylsp", -- python
+	"pyright", -- python
 	"jdtls", -- java
+	"gopls", -- golang
+	"ltex", -- markdown, latex
+    "denols", -- deno (js, ts, json...)
+    "sqls", -- sql
+    "taplo", -- toml
 }
 local dap = {
 	"codelldb",
-    "java-debug-adapter",
+	"java-debug-adapter",
+	"delve",
+	"js-debug-adapter",
 }
 local linter = {
 	"jsonlint",
 	"shellcheck",
+	"alex",
+    "eslint_d",
+    "commitlint"
 }
 local formatter = {
 	"clang-format",
@@ -23,11 +32,14 @@ local formatter = {
 	"stylua",
 	"prettier",
 	"pyment",
-    "xmlformatter",
+	"xmlformatter",
+	"gofumpt",
+	"golines",
 }
 M.lsp = lsp
 M.dap = dap
 M.linter = linter
 M.formatter = formatter
 M.all = vim.tbl_extend("keep", lsp, dap, linter, formatter)
+M.auto_install = false -- 自动安装Mason工具
 return M

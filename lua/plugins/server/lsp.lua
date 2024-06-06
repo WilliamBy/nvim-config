@@ -14,41 +14,63 @@ require("mason").setup({
 
 -- 2. mason-lspconfig
 local lspconfig = require("lspconfig")
-require("mason-lspconfig").setup({})
--- lsp 自动配置，参考 :h mason-lspconfig-automatic-server-setup
-require("mason-lspconfig").setup_handlers({
-	-- 之后无需单独为lsp配置nvim-lspconfig
+local lsputil = lspconfig.util
+-- 对每个lsp都要指定capabilities
+local sharedCap = require("plugins.server.cmp").capabilities
+require("mason-lspconfig").setup({
+	ensure_installed = mason_ls.lsp,
+	automatic_installation = mason_ls.auto_install,
+	handlers = {
+		-- 自动配置
+		function(server_name) -- default handler (optional)
+			require("lspconfig")[server_name].setup({ capabilities = sharedCap })
+		end,
 
-	-- 通用配置
-	function(server_name) -- default handler (optional)
-		require("lspconfig")[server_name].setup({})
-	end,
-
-	-- 独立配置
-	-- ["clangd"] = function(server_name)
-	-- 	lspconfig[server_name].setup({
-	-- 	})
-	-- end,
-	["jdtls"] = function(_)
-		if vim.bo.filetype ~= "java" then
-			return
-		end
-		require("configures.jdtls-config").setup()
-	end, -- use nvim-jdtls config instead
-	["lua_ls"] = function(server_name)
-		lspconfig[server_name].setup({
-			-- needed by neodev.nvim
-			settings = { Lua = { completion = { callSnippet = "Replace" } } },
-		})
-	end,
+		-- 独立配置
+		["jdtls"] = function()
+			if vim.bo.filetype ~= "java" then
+				return
+			end
+			require("configures.jdtls-config").setup()
+		end, -- use nvim-jdtls config instead
+		["lua_ls"] = function()
+			lspconfig.lua_ls.setup({
+				capabilities = sharedCap,
+				settings = { Lua = { completion = { callSnippet = "Replace" } } },
+			})
+		end,
+		["clangd"] = function()
+			lspconfig.clangd.setup({
+				capabilities = sharedCap,
+				-- exclude .proto file support
+				filetypes = { "c", "cpp", "objc", "objcpp", "cuda" },
+			})
+		end,
+		["ltex"] = function()
+			lspconfig.ltex.setup({
+				capabilities = sharedCap,
+				filetypes = { "markdown", "tex" },
+                settings = {
+                    ltex = {
+                        language = "zh-CN"
+                    }
+                }
+			})
+		end,
+	},
 })
 
 -- 3. nvim-lspconfig
--- mason-lspconfig 已经接管了lsp配置，无需再用nvim-lspconfig重复配置
+-- mason-lspconfig 之外的lsp配置
 
 -- 4. Lspsaga
 local saga = require("lspsaga")
 saga.setup({
+	finder = {
+		methods = {
+			tyd = "textDocument/typeDefinition",
+		},
+	},
 	ui = {
 		code_action = "󱠂",
 	},
@@ -116,10 +138,10 @@ require("lsp_signature").setup({
 	shadow_blend = 36, -- if you using shadow as border use this set the opacity
 	shadow_guibg = "Black", -- if you using shadow as border use this set the color e.g. 'Green' or '#121315'
 	timer_interval = 200, -- default timer check interval set to lower value if you want to reduce latency
-	toggle_key = "<C-S-k>", -- toggle signature on and off in insert mode,  e.g. toggle_key = '<M-x>'
+	toggle_key = "<C-k>", -- toggle signature on and off in insert mode,  e.g. toggle_key = '<M-x>'
 	toggle_key_flip_floatwin_setting = false, -- true: toggle float setting after toggle key pressed
 
-	select_signature_key = "gk", -- cycle to next signature, e.g. '<M-n>' function overloading
+	select_signature_key = "<C-S-K>", -- cycle to next signature, e.g. '<M-n>' function overloading
 	move_cursor_key = nil, -- imap, use nvim_set_current_win to move cursor between current win and floating
 })
 
@@ -144,8 +166,8 @@ trouble.setup({
 		cancel = "<esc>", -- cancel the preview and get back to your last window / buffer / cursor
 		refresh = "r", -- manually refresh
 		jump = { "<cr>", "<tab>", "<2-leftmouse>" }, -- jump to the diagnostic or open / close folds
-		open_split = { "<leader>wh" }, -- open buffer in new split
-		open_vsplit = { "<leader>wv" }, -- open buffer in new vsplit
+		open_split = { "<c-x>" }, -- open buffer in new split
+		open_vsplit = { "<c-v>" }, -- open buffer in new vsplit
 		open_tab = { "<c-t>" }, -- open buffer in new tab
 		jump_close = { "o" }, -- jump to the diagnostic and close the list
 		toggle_mode = "m", -- toggle between "workspace" and "document" diagnostics mode
@@ -165,7 +187,7 @@ trouble.setup({
 	indent_lines = true, -- add an indent guide below the fold icons
 	win_config = { border = "single" }, -- window configuration for floating windows. See |nvim_open_win()|.
 	auto_open = false, -- automatically open the list when you have diagnostics
-	auto_close = true, -- automatically close the list when you have no diagnostics
+	auto_close = false, -- automatically close the list when you have no diagnostics
 	auto_preview = true, -- automatically preview the location of the diagnostic. <esc> to close preview and go back to last window
 	auto_fold = false, -- automatically fold a file trouble list at creation
 	auto_jump = { "lsp_definitions" }, -- for the given modes, automatically jump if there is only a single result
@@ -200,7 +222,7 @@ require("actions-preview").setup({
 
 -- Global mappings.
 -- See `:help vim.diagnostic.*` for documentation on any of the below functions
-vim.keymap.set("n", "<leader>ef", vim.diagnostic.open_float, { desc = { "open float diagnostic" } })
+vim.keymap.set("n", "<leader>ef", vim.diagnostic.open_float, { desc = "open float diagnostic" })
 vim.keymap.set("n", "[d", "<cmd>Lspsaga diagnostic_jump_prev<cr>", { desc = "prev diagnostic" })
 vim.keymap.set("n", "]d", "<cmd>Lspsaga diagnostic_jump_next<cr>", { desc = "next diagnostic" })
 vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "setloclist" })
@@ -216,22 +238,18 @@ vim.api.nvim_create_autocmd("LspAttach", {
 
 		-- Buffer local mappings.
 		-- See `:help vim.lsp.*` for documentation on any of the below functions
-		local opts = { buffer = ev.buf }
-		vim.keymap.set("n", "<leader>wo", "<cmd>Lspsaga outline<CR>")
-		vim.keymap.set("n", "<leader>wr", "<cmd>Lspsaga finder ref+def<CR>")
-		vim.keymap.set("n", "gD", function()
-			trouble.open("lsp_declarations")
-		end, opts)
+		local opts = { silent = true, buffer = ev.buf }
+		vim.keymap.set("n", "<leader>wo", "<cmd>Lspsaga outline<CR>", opts)
+		vim.keymap.set("n", "<leader>wr", "<cmd>Lspsaga finder ref+def+tyd+imp<CR>", opts)
+		vim.keymap.set("n", "<leader>fs", "<cmd>Telescope lsp_dynamic_workspace_symbols<CR>", opts)
+		vim.keymap.set("n", "gD", "<cmd>Lspsaga finder tyd<cr>", opts)
 		vim.keymap.set("n", "gd", "<cmd>Lspsaga finder def<CR>", opts)
-		-- vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
 		vim.keymap.set("n", "K", "<cmd>Lspsaga hover_doc<CR>", opts)
-		vim.keymap.set("n", "gi", "<cmd>Lspsaga finder imp<CR>", opts)
-		vim.keymap.set({ "n", "i", "v" }, "<C-k>", require("lsp_signature").toggle_float_win, opts)
-		vim.keymap.set("n", "<leader>D", vim.lsp.buf.type_definition, opts)
+		vim.keymap.set("n", "gI", "<cmd>Lspsaga finder imp<CR>", opts)
+		vim.keymap.set({ "i" }, "<C-k>", require("lsp_signature").toggle_float_win, opts)
+		vim.keymap.set("n", "<leader>D", vim.lsp.buf.declaration, opts)
 		vim.keymap.set("n", "<leader>rn", "<cmd>Lspsaga rename<cr>", opts)
-		-- vim.keymap.set({ "n", "v" }, "<space>ca", vim.lsp.buf.code_action, opts)
 		vim.keymap.set({ "n", "v" }, "<leader>ca", require("actions-preview").code_actions, opts) -- nvim-code-action-menu.nvim
-		-- vim.keymap.set("n", "gr", vim.lsp.buf.references, opts)
 		vim.keymap.set("n", "gr", "<cmd>Lspsaga finder ref<CR>", opts)
 		vim.keymap.set("n", "<leader>ee", function()
 			trouble.open()
